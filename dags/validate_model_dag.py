@@ -1,18 +1,18 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.utils.dates import days_ago
-from generate_data import generate_data
+from utils.data_utils import validate_model
 
 with DAG(
-    dag_id="data_processing_dag",
+    dag_id="validate_model_dag",
     schedule_interval="@daily",
     start_date=days_ago(1),
     catchup=False
 ) as dag:
 
-    process_task = PythonOperator(
-        task_id="process_data",
-        python_callable=generate_data
+    validate_task = PythonOperator(
+        task_id="validate_model",
+        python_callable=validate_model
     )
 
-    process_task
+    validate_task
