@@ -12,6 +12,8 @@ project-root/
 │   ├── main.py          # Serwis FastAPI
 │   ├── model.pkl        # Wytrenowany model
 │   ├── requirements.txt # Lista zależności
+│── screenshots/         # Zrzuty ekranu
+│   ├── docker-compose.png
 │── docker-compose.yml   # Konfiguracja Docker Compose
 │── Dockerfile           # Konfiguracja obrazu Docker
 │── README.md            # Dokumentacja projektu
@@ -53,6 +55,41 @@ docker run -p 5000:5000 fastapi-model
 Aby uruchomić całość w kontenerze, użyj:
 ```sh
 docker-compose up --build
+```
+
+---
+
+## ☁️ Wdrożenie na Google Cloud Run
+### 1️⃣ Zaloguj się do Google Cloud
+```sh
+gcloud auth login
+gcloud config set project YOUR_PROJECT_ID
+```
+
+### 2️⃣ Zbuduj i wypchnij obraz do Google Container Registry
+```sh
+gcloud builds submit --tag gcr.io/YOUR_PROJECT_ID/fastapi-model
+```
+
+### 3️⃣ Wdrożenie na Google Cloud Run
+```sh
+gcloud run deploy fastapi-model \
+    --image gcr.io/YOUR_PROJECT_ID/fastapi-model \
+    --platform managed \
+    --allow-unauthenticated \
+    --region europe-west1
+```
+
+Po zakończeniu zobaczysz **URL**, np.:
+```
+https://fastapi-model-abcdefg-ue.a.run.app
+```
+
+Teraz możesz przetestować API:
+```sh
+curl -X POST "https://fastapi-model-abcdefg-ue.a.run.app/predict" \
+     -H "Content-Type: application/json" \
+     -d '{"feature1": 1.5, "feature2": 2.3, "feature3": 3.1}'
 ```
 
 ---
